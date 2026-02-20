@@ -4,7 +4,7 @@ services:
     image: mariadb:11.8
     command: ['mariadbd','--character-set-server=utf8mb4']
     ports:
-      - "${MYSQL_PORT_HOST:-3306}:3306"
+      - "${MYSQL_PORT_HOST:-3376}:3376"
     volumes:
       - databasevolume:/var/lib/mysql
     environment:
