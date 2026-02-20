@@ -6,15 +6,12 @@ clone_files() {
     echo 'Cloning files'
     # Initialize and update the public submodule first
     git submodule update --init --recursive ci/inferno/onc-certification-g10-test-kit
-    # Try to initialize and update the private submodule, but don't fail if it doesn't work
-    git submodule update --init --recursive ci/inferno/inferno-files || echo "WARNING: Could not clone inferno-files (private repository). Proceeding without it..."
-    # We need to copy the contents of the files directory from the private
-    # submodule in inferno-files into the `onc-certification-g10-test-kit` directory.
-    # If the inferno-files directory is empty at this point, the user probably
-    # does not have access to the inferno-files repository. In that case
-    # print a warning that the process may take several hours and continue.
+    # Manually clone the private repository if it doesn't exist, as it's no longer a git submodule
+    if [[ ! -d "ci/inferno/inferno-files" ]] || [[ -z "$(ls -A ci/inferno/inferno-files 2>/dev/null)" ]]; then
+        git clone https://github.com/openemr/inferno-files.git ci/inferno/inferno-files || echo "WARNING: Could not clone inferno-files (private repository). Proceeding without it..."
+    fi
 
-    INFERNO_FILES_DIR="inferno-files/files"
+    INFERNO_FILES_DIR="ci/inferno/inferno-files/files"
     TARGET_DIR="onc-certification-g10-test-kit"
 
     if [[ -d "${INFERNO_FILES_DIR}" ]] && ls -A "${INFERNO_FILES_DIR}" 2>/dev/null; then
