@@ -1,0 +1,69 @@
+services:
+  mysql:
+    restart: always
+    image: mysql:8.0
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-authentication-plugin=mysql_native_password']
+    ports:
+      - "3306:3306"
+    volumes:
+      - databasevolume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openemr}
+      MYSQL_USER: ${MYSQL_USER:-openemr}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-openemr}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      timeout: 5s
+      retries: 5
+      interval: 10s
+
+  openemr:
+    restart: always
+    image: openemr/openemr:flex
+    ports:
+      - "8300:80"
+      - "9300:443"
+    volumes:
+      - .:/openemr:ro
+      - .:/var/www/localhost/htdocs/openemr:rw
+      - assetvolume:/var/www/localhost/htdocs/openemr/public/assets:rw
+      - themevolume:/var/www/localhost/htdocs/openemr/public/themes:rw
+      - sitesvolume:/var/www/localhost/htdocs/openemr/sites:rw
+      - nodemodules:/var/www/localhost/htdocs/openemr/node_modules:rw
+      - vendordir:/var/www/localhost/htdocs/openemr/vendor:rw
+      - ccdanodemodules:/var/www/localhost/htdocs/openemr/ccdaservice/node_modules:rw
+      - logvolume:/var/log
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASS: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${MYSQL_USER:-openemr}
+      MYSQL_PASS: ${MYSQL_PASSWORD:-openemr}
+      OE_USER: ${OE_USER:-admin}
+      OE_PASS: ${OE_PASS:-pass}
+      EASY_DEV_MODE: "yes"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin
+    ports:
+      - "8310:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  databasevolume: {}
+  assetvolume: {}
+  themevolume: {}
+  sitesvolume: {}
+  nodemodules: {}
+  vendordir: {}
+  ccdanodemodules: {}
+  logvolume: {}
