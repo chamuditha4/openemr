@@ -1,8 +1,8 @@
 services:
   mysql:
     restart: always
-    image: mysql:8.0
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-authentication-plugin=mysql_native_password']
+    image: mariadb:11.8
+    command: ['mariadbd', '--character-set-server=utf8mb4']
     ports:
       - "${MYSQL_PORT_HOST:-3376}:3306"
     volumes:
@@ -25,11 +25,7 @@ services:
       - "${HTTP_PORT_HOST:-8370}:80"
       - "${HTTPS_PORT_HOST:-9370}:443"
     volumes:
-      - .:/openemr:ro
       - .:/var/www/localhost/htdocs/openemr:rw
-      - nodemodules:/var/www/localhost/htdocs/openemr/node_modules:rw
-      - vendordir:/var/www/localhost/htdocs/openemr/vendor:rw
-      - ccdanodemodules:/var/www/localhost/htdocs/openemr/ccdaservice/node_modules:rw
       - logvolume:/var/log
     environment:
       MYSQL_HOST: mysql
@@ -38,9 +34,15 @@ services:
       MYSQL_PASS: ${MYSQL_PASSWORD:-openemr}
       OE_USER: ${OE_USER:-admin}
       OE_PASS: ${OE_PASS:-pass}
+      DEBUG_COLORS: "true"
+      TERM: xterm-256color
+      COLORTERM: truecolor
       EASY_DEV_MODE: "yes"
+      EASY_DEV_MODE_NEW: "yes"
+      DEVELOPER_TOOLS: "yes"
       FORCE_NO_BUILD_MODE: "yes"
       EMPTY: "yes"
+      OPENEMR_DOCKER_ENV_TAG: easy-dev-docker
     depends_on:
       mysql:
         condition: service_healthy
@@ -59,7 +61,4 @@ services:
 
 volumes:
   databasevolume: {}
-  nodemodules: {}
-  vendordir: {}
-  ccdanodemodules: {}
   logvolume: {}
