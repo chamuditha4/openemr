@@ -4,7 +4,7 @@ services:
     image: mysql:8.0
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-authentication-plugin=mysql_native_password']
     ports:
-      - "${MYSQL_PORT_HOST:-3376}:3376"
+      - "${MYSQL_PORT_HOST:-3376}:3306"
     volumes:
       - databasevolume:/var/lib/mysql
     environment:
@@ -42,6 +42,7 @@ services:
       OE_USER: ${OE_USER:-admin}
       OE_PASS: ${OE_PASS:-pass}
       EASY_DEV_MODE: "yes"
+      FORCE_NO_BUILD_MODE: "yes"
     depends_on:
       mysql:
         condition: service_healthy
