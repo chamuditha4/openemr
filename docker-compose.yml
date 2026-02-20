@@ -2,32 +2,35 @@ services:
   mysql:
     restart: always
     image: mariadb:11.8
-    command: ['mariadbd', '--character-set-server=utf8mb4']
+    command: ['mariadbd','--character-set-server=utf8mb4']
     ports:
-      - "${MYSQL_PORT_HOST:-3376}:3306"
+      - "${MYSQL_PORT_HOST:-3306}:3306"
     volumes:
       - databasevolume:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-openemr}
-      MYSQL_USER: ${MYSQL_USER:-openemr}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-openemr}
     healthcheck:
-      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD:-root} || exit 1"]
+      test:
+        - CMD
+        - /usr/local/bin/healthcheck.sh
+        - --su-mysql
+        - --connect
+        - --innodb_initialized
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
       timeout: 5s
-      retries: 5
-      interval: 10s
+      retries: 3
 
   openemr:
     restart: always
-    image: openemr/openemr:flex
+    image: openemr/openemr:7.0.4
     ports:
-      - "${HTTP_PORT_HOST:-8370}:80"
-      - "${HTTPS_PORT_HOST:-9370}:443"
+      - "${HTTP_PORT_HOST:-8300}:80"
+      - "${HTTPS_PORT_HOST:-9300}:443"
     volumes:
-      - .:/openemr:ro
-      - .:/var/www/localhost/htdocs/openemr:rw
-      - logvolume:/var/log
+      - logvolume01:/var/log
+      - sitevolume:/var/www/localhost/htdocs/openemr/sites
     environment:
       MYSQL_HOST: mysql
       MYSQL_ROOT_PASS: ${MYSQL_ROOT_PASSWORD:-root}
@@ -35,18 +38,24 @@ services:
       MYSQL_PASS: ${MYSQL_PASSWORD:-openemr}
       OE_USER: ${OE_USER:-admin}
       OE_PASS: ${OE_PASS:-pass}
-      DEBUG_COLORS: "true"
-      TERM: xterm-256color
-      COLORTERM: truecolor
-      EASY_DEV_MODE: "yes"
-      EASY_DEV_MODE_NEW: "yes"
-      DEVELOPER_TOOLS: "yes"
-      FORCE_NO_BUILD_MODE: "yes"
-      EMPTY: "yes"
-      OPENEMR_DOCKER_ENV_TAG: easy-dev-docker
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - /usr/bin/curl
+        - --fail
+        - --insecure
+        - --location
+        - --show-error
+        - --silent
+        - https://localhost/meta/health/readyz
+      start_period: 3m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
 
   phpmyadmin:
     restart: always
@@ -61,5 +70,6 @@ services:
         condition: service_healthy
 
 volumes:
+  logvolume01: {}
+  sitevolume: {}
   databasevolume: {}
-  logvolume: {}
