@@ -4,18 +4,13 @@ services:
     image: mariadb:11.8
     command: ['mariadbd','--character-set-server=utf8mb4']
     ports:
-      - "${MYSQL_PORT_HOST:-3376}:3376"
+      - "${MYSQL_PORT_HOST:-3376}:3306"
     volumes:
       - databasevolume:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
     healthcheck:
-      test:
-        - CMD
-        - /usr/local/bin/healthcheck.sh
-        - --su-mysql
-        - --connect
-        - --innodb_initialized
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD:-root} || exit 1"]
       start_period: 1m
       start_interval: 10s
       interval: 1m
