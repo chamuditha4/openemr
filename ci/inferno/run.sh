@@ -4,7 +4,10 @@ set -xeuo pipefail
 
 clone_files() {
     echo 'Cloning files'
-    git submodule update --init --recursive
+    # Initialize and update the public submodule first
+    git submodule update --init --recursive ci/inferno/onc-certification-g10-test-kit
+    # Try to initialize and update the private submodule, but don't fail if it doesn't work
+    git submodule update --init --recursive ci/inferno/inferno-files || echo "WARNING: Could not clone inferno-files (private repository). Proceeding without it..."
     # We need to copy the contents of the files directory from the private
     # submodule in inferno-files into the `onc-certification-g10-test-kit` directory.
     # If the inferno-files directory is empty at this point, the user probably
