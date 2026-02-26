@@ -1,0 +1,70 @@
+services:
+  mysql:
+    restart: always
+    image: mariadb:11.8
+    command: ['mariadbd','--character-set-server=utf8mb4']
+    ports:
+      - "${MYSQL_PORT_HOST:-3376}:3306"
+    volumes:
+      - databasevolume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD:-root} || exit 1"]
+      start_period: 30s
+      start_interval: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  openemr:
+    restart: always
+    image: openemr/openemr:7.0.4
+    ports:
+      - "${HTTP_PORT_HOST:-8370}:80"
+      - "${HTTPS_PORT_HOST:-9370}:443"
+    volumes:
+      - logvolume01:/var/log
+      - sitevolume:/var/www/localhost/htdocs/openemr/sites
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASS: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${MYSQL_USER:-openemr}
+      MYSQL_PASS: ${MYSQL_PASSWORD:-openemr}
+      OE_USER: ${OE_USER:-admin}
+      OE_PASS: ${OE_PASS:-pass}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - /usr/bin/curl
+        - --fail
+        - --insecure
+        - --location
+        - --show-error
+        - --silent
+        - https://localhost/meta/health/readyz
+      start_period: 5m
+      start_interval: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin
+    ports:
+      - "${PMA_PORT_HOST:-8310}:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  logvolume01: {}
+  sitevolume: {}
+  databasevolume: {}
