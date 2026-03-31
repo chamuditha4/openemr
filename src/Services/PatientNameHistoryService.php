@@ -16,9 +16,8 @@
 namespace OpenEMR\Services;
 
 use OpenEMR\Common\Database\QueryUtils;
-use OpenEMR\Common\Logging\SystemLogger;
+use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Common\Uuid\UuidRegistry;
-use OpenEMR\Services\PatientService;
 
 class PatientNameHistoryService extends BaseService
 {
@@ -45,8 +44,9 @@ class PatientNameHistoryService extends BaseService
      */
     public function createPatientNameHistory($pid, $record)
     {
+        $session = SessionWrapperFactory::getInstance()->getActiveSession();
         // we should never be null here but for legacy reasons we are going to default to this
-        $createdBy = $_SESSION['authUserID'] ?? null; // we don't let anyone else but the current user be the createdBy
+        $createdBy = $session->get('authUserID'); // we don't let anyone else but the current user be the createdBy
         if ($pid <= 0) {
             return false;
         }

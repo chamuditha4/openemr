@@ -29,8 +29,10 @@ require_once("../../custom/code_types.inc.php");
 use OpenEMR\Common\Acl\AccessDeniedHelper;
 use OpenEMR\Common\Acl\AclMain;
 use OpenEMR\Common\Csrf\CsrfUtils;
+use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Common\Utils\FormatMoney;
 use OpenEMR\Core\Header;
+use OpenEMR\Core\OEGlobalsBag;
 use OpenEMR\Services\InsuranceCompanyService;
 use OpenEMR\Services\InsuranceService;
 
@@ -38,8 +40,9 @@ if (!AclMain::aclCheckCore('acct', 'rep_a')) {
     AccessDeniedHelper::denyWithTemplate("ACL check failed for acct/rep_a: Receipts Summary", xl("Receipts Summary"));
 }
 
+$session = SessionWrapperFactory::getInstance()->getActiveSession();
 if (!empty($_POST)) {
-    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"])) {
+    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"], session: $session)) {
         CsrfUtils::csrfNotVerified();
     }
 }
@@ -312,7 +315,7 @@ $form_proc_code = $tmp_code_array[1] ?? null;
                 <?php $datetimepicker_timepicker = false; ?>
                 <?php $datetimepicker_showseconds = false; ?>
                 <?php $datetimepicker_formatInput = true; ?>
-                <?php require($GLOBALS['srcdir'] . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
+                <?php require(OEGlobalsBag::getInstance()->get('srcdir') . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
                 <?php // can add any additional javascript settings to datetimepicker here; need to prepend first setting with a comma ?>
             });
         });
@@ -356,7 +359,7 @@ $form_proc_code = $tmp_code_array[1] ?? null;
 <span class='title'><?php echo xlt('Report'); ?> - <?php echo xlt('Receipts Summary'); ?></span>
 
 <form method='post' action='receipts_by_method_report.php' id='theform' onsubmit='return top.restoreSession()'>
-<input type="hidden" name="csrf_token_form" value="<?php echo attr(CsrfUtils::collectCsrfToken()); ?>" />
+<input type="hidden" name="csrf_token_form" value="<?php echo CsrfUtils::collectCsrfToken(session: $session); ?>" />
 <div id="report_parameters">
     <div class="form-row col-md-6">
         <input type='hidden' name='form_refresh' id='form_refresh' value=''/>
@@ -412,7 +415,7 @@ $form_proc_code = $tmp_code_array[1] ?? null;
 
                         echo "   </select>\n";
                     } else {
-                        echo "<input type='hidden' name='form_provider' value='" . attr($_SESSION['authUserID']) . "'>";
+                        echo "<input type='hidden' name='form_provider' value='" . attr($session->get('authUserID')) . "'>";
                     }
                     ?>
                 </td>
@@ -420,7 +423,7 @@ $form_proc_code = $tmp_code_array[1] ?? null;
         <div class="form-group col-auto">
             <label for="form_proc_codefull">
             <?php
-            if (!$GLOBALS['simplified_demographics']) {
+            if (!OEGlobalsBag::getInstance()->getBoolean('simplified_demographics')) {
                 echo xlt('Procedure/Service');
             }
             ?>
@@ -428,7 +431,7 @@ $form_proc_code = $tmp_code_array[1] ?? null;
             <input type='text' name='form_proc_codefull' id='form_proc_codefull' class='form-control' size='12' value='<?php echo attr($form_proc_codefull); ?>' onclick='sel_procedure()'
                 title='<?php echo xla('Click to select optional procedure code'); ?>'
             <?php
-            if ($GLOBALS['simplified_demographics']) {
+            if (OEGlobalsBag::getInstance()->getBoolean('simplified_demographics')) {
                 echo "style='display:none'";
             } ?> />
         </div>
@@ -533,7 +536,7 @@ if (!empty($_POST['form_refresh'])) {
         $form_provider = $_POST['form_provider'];
         if (!AclMain::aclCheckCore('acct', 'rep_a')) {
             // only allow user to see their encounter information
-            $form_provider = $_SESSION['authUserID'];
+            $form_provider = $session->get('authUserID');
         }
 
 

@@ -19,10 +19,11 @@
 
 namespace OpenEMR\Common\Acl;
 
+use OpenEMR\Common\Acl\AclMain;
+use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Gacl\GaclApi;
 use OpenEMR\Services\UserService;
 use OpenEMR\Services\VersionService;
-use OpenEMR\Common\Acl\AclMain;
 
 class AclExtended
 {
@@ -1084,7 +1085,8 @@ class AclExtended
     public static function getUserPermissions($username = '')
     {
         if (!$username) {
-            $username = $_SESSION['authUser'];
+            $session = SessionWrapperFactory::getInstance()->getActiveSession();
+            $username = $session->get('authUser');
         }
         $gacl = self::collectGaclApiObject();
         $perms = [];

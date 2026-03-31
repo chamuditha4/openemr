@@ -13,16 +13,10 @@
 
 namespace OpenEMR\Services;
 
-use MongoDB\Driver\Query;
 use OpenEMR\Common\Database\QueryUtils;
-use OpenEMR\Common\Uuid\UuidRegistry;
-use OpenEMR\Services\Search\DateSearchField;
-use OpenEMR\Services\Search\TokenSearchField;
-use OpenEMR\Services\Search\TokenSearchValue;
+use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Validators\ProcessingResult;
-use Particle\Validator\Exception\InvalidValueException;
 use Particle\Validator\Validator;
-use OpenEMR\Validators\BaseValidator;
 
 class PatientTransactionService extends BaseService
 {
@@ -156,7 +150,8 @@ class PatientTransactionService extends BaseService
 
     public function insertTransaction($pid, $data)
     {
-        $user = $_SESSION['authUser'];
+        $session = SessionWrapperFactory::getInstance()->getActiveSession();
+        $user = $session->get('authUser');
         $sql =
         "
             INSERT INTO transactions SET

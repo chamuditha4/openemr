@@ -10,7 +10,7 @@
  * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
  */
 
-use OpenEMR\Common\Crypto\CryptoGen;
+use OpenEMR\BC\ServiceContainer;
 use OpenEMR\Services\VersionService;
 
 class eRxGlobals
@@ -138,8 +138,9 @@ class eRxGlobals
      */
     public function getAccountPassword()
     {
-        $cryptoGen = new CryptoGen();
-        return $cryptoGen->decryptStandard($this->getGlobalValue('erx_account_password'));
+        $cryptoGen = ServiceContainer::getCrypto();
+        $value = $this->getGlobalValue('erx_account_password');
+        return $cryptoGen->decryptStandard(is_string($value) ? $value : null);
     }
 
     /**

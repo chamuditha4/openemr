@@ -20,7 +20,7 @@
 
 require_once("../globals.php");
 require_once("$srcdir/patient.inc.php");
-require_once($GLOBALS['OE_SITE_DIR'] . "/statement.inc.php");
+require_once(\OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR') . "/statement.inc.php");
 require_once("$srcdir/options.inc.php");
 
 use OpenEMR\Billing\ParseERA;
@@ -28,6 +28,7 @@ use OpenEMR\Billing\SLEOB;
 use OpenEMR\Common\Acl\AccessDeniedHelper;
 use OpenEMR\Common\Acl\AclMain;
 use OpenEMR\Common\Csrf\CsrfUtils;
+use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Core\Header;
 use OpenEMR\Core\OEGlobalsBag;
 use OpenEMR\OeUI\OemrUI;
@@ -70,6 +71,7 @@ function era_payments_callback(array &$out): void
         $where .= "( f.pid = '" . add_escape_custom($pid) . "' AND f.encounter = '" . add_escape_custom($encounter) . "' )";
     }
 }
+$session = SessionWrapperFactory::getInstance()->getActiveSession();
 //===============================================================================
 // Validate pending_eraname matches expected pattern (YYYYMMDD_controlnum_payerid)
 // to prevent path traversal. Only alphanumeric and underscores are allowed.
@@ -77,7 +79,7 @@ $validEraName = $pending_eraname !== '' && preg_match('/^[0-9]{8}_[0-9]+_[0-9]+$
 
 // Handle confirmed overwrite from pending upload
 if ($confirm_overwrite === 'yes' && $validEraName) {
-    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"])) {
+    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"], $session)) {
         CsrfUtils::csrfNotVerified();
     }
     $eraDir = OEGlobalsBag::getInstance()->getString('OE_SITE_DIR') . "/documents/era";
@@ -114,7 +116,7 @@ if ($confirm_overwrite === 'yes' && $validEraName) {
 //===============================================================================
   // Handle X12 835 file upload.
 elseif (!empty($_FILES['form_erafile']['size'])) {
-    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"])) {
+    if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"], session: $session)) {
         CsrfUtils::csrfNotVerified();
     }
 
@@ -162,7 +164,7 @@ elseif (!empty($_FILES['form_erafile']['size'])) {
 <html>
 <head>
     <?php Header::setupHeader(['datetime-picker', 'common']);?>
-    <?php require_once("{$GLOBALS['srcdir']}/ajax/payment_ajax_jav.inc.php"); ?>
+    <?php require_once(OEGlobalsBag::getInstance()->get('srcdir') . "/ajax/payment_ajax_jav.inc.php"); ?>
     <script>
     function Validate()
     {
@@ -215,7 +217,7 @@ elseif (!empty($_FILES['form_erafile']['size'])) {
              deposit_date: deposit_date,
              original: 'original',
              InsId: <?php echo js_escape($hidden_type_code); ?>,
-             csrf_token_form: <?php echo js_escape(CsrfUtils::collectCsrfToken()); ?>
+             csrf_token_form: <?php echo js_escape(CsrfUtils::collectCsrfToken(session: $session)); ?>
          });
          window.open('sl_eob_process.php?' + params.toString(), '_blank');
          return false;
@@ -229,7 +231,7 @@ elseif (!empty($_FILES['form_erafile']['size'])) {
             <?php $datetimepicker_timepicker = false; ?>
             <?php $datetimepicker_showseconds = false; ?>
             <?php $datetimepicker_formatInput = true; ?>
-            <?php require($GLOBALS['srcdir'] . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
+            <?php require(OEGlobalsBag::getInstance()->get('srcdir') . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
             <?php // can add any additional javascript settings to datetimepicker here; need to prepend first setting with a comma ?>
        });
     });
@@ -334,7 +336,7 @@ elseif (!empty($_FILES['form_erafile']['size'])) {
         <div class="row">
             <div class="col-sm-12">
                 <form action='era_payments.php' enctype="multipart/form-data" method='post' style="display:inline">
-                    <input type="hidden" name="csrf_token_form" value="<?php echo attr(CsrfUtils::collectCsrfToken()); ?>" />
+                    <input type="hidden" name="csrf_token_form" value="<?php echo CsrfUtils::collectCsrfToken(session: $session); ?>" />
                     <fieldset>
                         <div class="jumbotron py-4">
                             <div class="row h3">

@@ -13,12 +13,14 @@ declare(strict_types=1);
 namespace OpenEMR\BC;
 
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
+use Psr\Log\{
+    LoggerInterface,
+    NullLogger,
+};
 use OpenEMR\Common\Crypto;
 use OpenEMR\Common\Logging;
 use Lcobucci\Clock\SystemClock;
 use OpenEMR\Common\Http\Psr17Factory;
-use OpenEMR\Core\OEGlobalsBag;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\{
     RequestFactoryInterface,
@@ -102,7 +104,13 @@ class ServiceContainer
 
     public static function getLogger(): LoggerInterface
     {
-        return self::resolve(LoggerInterface::class) ?? new Logging\SystemLogger();
+        if ($logger = self::resolve(LoggerInterface::class)) {
+            return $logger;
+        }
+        if (defined('PHPUNIT_COMPOSER_INSTALL')) {
+            return new NullLogger();
+        }
+        return new Logging\SystemLogger();
     }
 
     public static function getRequestFactory(): RequestFactoryInterface

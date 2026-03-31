@@ -367,11 +367,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../interface/forms/vitals/C_FormVitals.class.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method OpenEMR\\\\Common\\\\Twig\\\\TwigContainer\\:\\:render\\(\\)\\.$#',
-    'count' => 1,
-    'path' => __DIR__ . '/../../interface/main/messages/templates/linked_documents.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#',
     'count' => 4,
     'path' => __DIR__ . '/../../interface/modules/custom_modules/oe-module-comlink-telehealth/src/Bootstrap.php',
@@ -380,11 +375,6 @@ $ignoreErrors[] = [
     'message' => '#^Call to an undefined method OpenEMR\\\\Events\\\\User\\\\UserUpdatedEvent\\:\\:getUsername\\(\\)\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/../../interface/modules/custom_modules/oe-module-comlink-telehealth/src/Controller/TeleHealthVideoRegistrationController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:errorLogCaller\\(\\)\\.$#',
-    'count' => 2,
-    'path' => __DIR__ . '/../../interface/modules/custom_modules/oe-module-comlink-telehealth/src/Controller/TeleconferenceRoomController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method OpenEMR\\\\Modules\\\\DashboardContext\\\\Services\\\\DashboardContextAdminService\\:\\:removeUserAssignment\\(\\)\\.$#',
@@ -442,14 +432,14 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Application/src/Application/Controller/SendtoController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Laminas\\\\Stdlib\\\\RequestInterface\\:\\:getPost\\(\\)\\.$#',
-    'count' => 3,
+    'message' => '#^Call to an undefined method Application\\\\Model\\\\SendtoTable\\:\\:getCombinationFormComponents\\(\\)\\.$#',
+    'count' => 1,
     'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Application/src/Application/Controller/SendtoController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Laminas\\\\Db\\\\Adapter\\\\AdapterInterface\\:\\:query\\(\\)\\.$#',
-    'count' => 2,
-    'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Application/src/Application/Model/ApplicationTable.php',
+    'message' => '#^Call to an undefined method Laminas\\\\Stdlib\\\\RequestInterface\\:\\:getPost\\(\\)\\.$#',
+    'count' => 3,
+    'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Application/src/Application/Controller/SendtoController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Carecoordination\\\\Controller\\\\CarecoordinationController\\:\\:CommonPlugin\\(\\)\\.$#',
@@ -619,21 +609,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Laminas\\\\Stdlib\\\\RequestInterface\\:\\:getQuery\\(\\)\\.$#',
     'count' => 2,
-    'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Multipledb/src/Multipledb/Controller/BaseController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Laminas\\\\Stdlib\\\\ResponseInterface\\:\\:setStatusCode\\(\\)\\.$#',
-    'count' => 1,
-    'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Multipledb/src/Multipledb/Controller/BaseController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Laminas\\\\Mvc\\\\Controller\\\\Plugin\\\\Layout\\|Laminas\\\\View\\\\Model\\\\ModelInterface\\:\\:setVariable\\(\\)\\.$#',
-    'count' => 11,
-    'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Multipledb/src/Multipledb/Controller/MultipledbController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Laminas\\\\Stdlib\\\\RequestInterface\\:\\:getQuery\\(\\)\\.$#',
-    'count' => 2,
     'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Patientvalidation/src/Patientvalidation/Controller/BaseController.php',
 ];
 $ignoreErrors[] = [
@@ -657,7 +632,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../interface/modules/zend_modules/module/Syndromicsurveillance/src/Syndromicsurveillance/Controller/SyndromicsurveillanceController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method OpenEMR\\\\Common\\\\Logging\\\\SystemLogger\\:\\:logError\\(\\)\\.$#',
+    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:logError\\(\\)\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/../../interface/reports/appointments_report.php',
 ];
@@ -677,7 +652,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../interface/soap_functions/soap_patientfullmedication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method OpenEMR\\\\Common\\\\Logging\\\\SystemLogger\\:\\:logError\\(\\)\\.$#',
+    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:logError\\(\\)\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/../../library/ajax/immunization_export.php',
 ];
@@ -922,16 +897,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../src/Common/Command/CreateReleaseChangelogCommand.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:errorLogCaller\\(\\)\\.$#',
-    'count' => 2,
-    'path' => __DIR__ . '/../../src/Common/Forms/FormLocator.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:errorLogCaller\\(\\)\\.$#',
-    'count' => 2,
-    'path' => __DIR__ . '/../../src/Common/Http/HttpRestRouteHandler.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method OpenEMR\\\\Common\\\\ORDataObject\\\\ORDataObject\\:\\:get_id\\(\\)\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/../../src/Common/ORDataObject/ORDataObject.php',
@@ -940,11 +905,6 @@ $ignoreErrors[] = [
     'message' => '#^Call to an undefined method OpenEMR\\\\Services\\\\FHIR\\\\IFhirExportableResourceService\\:\\:setServiceLocator\\(\\)\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/../../src/RestControllers/FHIR/Operations/FhirOperationExportRestController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Psr\\\\Log\\\\LoggerInterface\\:\\:errorLogCaller\\(\\)\\.$#',
-    'count' => 2,
-    'path' => __DIR__ . '/../../src/RestControllers/SMART/SMARTAuthorizationController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Symfony\\\\Component\\\\HttpFoundation\\\\Request\\:\\:getHeader\\(\\)\\.$#',
@@ -1233,7 +1193,7 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\:\\:root_database_connection\\(\\)\\.$#',
-    'count' => 9,
+    'count' => 4,
     'path' => __DIR__ . '/../../tests/Tests/Isolated/library/classes/InstallerTest.php',
 ];
 $ignoreErrors[] = [
@@ -1253,7 +1213,7 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\:\\:user_database_connection\\(\\)\\.$#',
-    'count' => 8,
+    'count' => 5,
     'path' => __DIR__ . '/../../tests/Tests/Isolated/library/classes/InstallerTest.php',
 ];
 $ignoreErrors[] = [
