@@ -25,6 +25,7 @@ services:
       - "${HTTPS_PORT_HOST:-9370}:443"
     volumes:
       - logvolume01:/var/log
+      - .:/var/www/localhost/htdocs/openemr
       - sitevolume:/var/www/localhost/htdocs/openemr/sites
     environment:
       MYSQL_HOST: mysql
